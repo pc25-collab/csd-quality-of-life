@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topic 1 Learning Focus 2: Quality of Life Interactive Platform</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              700: '#1e40af',
+              800: '#1e3a8a',
+            },
+            accent: {
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Vue.js 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    [v-cloak] { display: none !important; }
+    .card-flip { perspective: 1000px; }
+    .card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+    .card-flipped { transform: rotateY(180deg); }
+    .card-front, .card-back { backface-visibility: hidden; }
+    .card-back { transform: rotateY(180deg); }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+  </style>
+</head>
+
+<body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
+  <div id="app" v-cloak class="min-h-screen flex flex-col">
+    
+    <!-- Top Navigation Header -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-500/20">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+              <h1 class="font-bold text-lg tracking-tight leading-none text-slate-900 dark:text-white">CSD Quality of Life</h1>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Topic 1 Learning Focus 2 • Interactive Platform</p>
+            </div>
+          </div>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex items-center space-x-1">
+            <button 
+              v-for="tab in mainTabs" 
+              :key="tab.id"
+              @click="activeTab = tab.id"
+              :class="activeTab === tab.id 
+                ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-semibold' 
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50'"
+              class="px-3 py-2 rounded-lg text-sm transition flex items-center space-x-2">
+              <i :class="tab.icon"></i>
+              <span>{{ tab.name }}</span>
+            </button>
+          </nav>
+
+          <!-- User Progress & Utilities -->
+          <div class="flex items-center space-x-3">
+            <div class="hidden sm:flex items-center space-x-2 bg-slate-100 dark:bg-slate-700/60 px-3 py-1.5 rounded-full text-xs font-medium">
+              <i class="fa-solid fa-trophy text-amber-500"></i>
+              <span>Progress: {{ overallProgress }}%</span>
+            </div>
+
+            <button @click="toggleDarkMode" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700">
+              <i class="fa-solid" :class="isDark ? 'fa-sun text-amber-400' : 'fa-moon'"></i>
+            </button>
+
+            <!-- Mobile Menu Toggle -->
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300">
+              <i class="fa-solid" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Navigation -->
+      <div v-if="mobileMenuOpen" class="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 pt-2 pb-4 space-y-1">
+        <button 
+          v-for="tab in mainTabs" 
+          :key="tab.id"
+          @click="activeTab = tab.id; mobileMenuOpen = false"
+          :class="activeTab === tab.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 font-semibold' : 'text-slate-600 dark:text-slate-300'"
+          class="w-full text-left px-3 py-2 rounded-lg text-base flex items-center space-x-3">
+          <i :class="tab.icon" class="w-5 text-center"></i>
+          <span>{{ tab.name }}</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      
+      <div v-if="activeTab === 'modules'" class="space-y-6">
+        <!-- Module Header Banner -->
+        <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+          <div class="relative z-10 max-w-3xl">
+            <span class="inline-block bg-white/20 backdrop-blur-md text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-3">Topic 1 • Change in People's Life</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Changes & Enhancement of People's Quality of Life</h2>
+            <p class="text-blue-100 text-sm sm:text-base leading-relaxed">
+              Explore how China's reform and opening-up transformed daily living standards across income, consumption patterns, educational levels, healthcare systems, and targeted poverty alleviation.
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2 text-xs">
+              <span class="bg-black/20 px-2.5 py-1 rounded-md"><i class="fa-solid fa-chart-line mr-1"></i> GDP & Per Capita Income</span>
+              <span class="bg-black/20 px-2.5 py-1 rounded-md"><i class="fa-solid fa-shopping-bag mr-1"></i> Three Major Items</span>
+              <span class="bg-black/20 px-2.5 py-1 rounded-md"><i class="fa-solid fa-graduation-cap mr-1"></i> Double Reduction</span>
+              <span class="bg-black/20 px-2.5 py-1 rounded-md"><i class="fa-solid fa-heart-pulse mr-1"></i> Hierarchical Care</span>
+              <span class="bg-black/20 px-2.5 py-1 rounded-md"><i class="fa-solid fa-hand-holding-hand mr-1"></i> Targeted Poverty Alleviation</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Navigation Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <button 
+            v-for="(mod, idx) in modules" 
+            :key="mod.id"
+            @click="currentModuleIndex = idx"
+            :class="currentModuleIndex === idx 
+              ? 'ring-2 ring-blue-500 bg-white dark:bg-slate-800 shadow-md' 
+              : 'bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-800'"
+            class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 text-left transition relative overflow-hidden group">
+            <div class="flex items-center space-x-2 mb-1">
+              <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold"
+                :class="currentModuleIndex === idx ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">
+                {{ mod.letter }}
+              </span>
+              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Section {{ idx + 1 }}</span>
+            </div>
+            <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2">{{ mod.title }}</h3>
+          </button>
+        </div>
+
+        <!-- Active Module Content View -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 md:p-8 shadow-sm space-y-8">
+          
+          <!-- Module Header -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-100 dark:border-slate-700/80 pb-6 gap-4">
+            <div>
+              <div class="flex items-center space-x-2 text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">
+                <i :class="activeModule.icon"></i>
+                <span>Section {{ activeModule.letter }} Learning Module</span>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900 dark:text-white">{{ activeModule.title }}</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ activeModule.subtitle }}</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button @click="prevModule" :disabled="currentModuleIndex === 0" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40">
+                <i class="fa-solid fa-chevron-left mr-1"></i> Prev
+              </button>
+              <button @click="nextModule" :disabled="currentModuleIndex === modules.length - 1" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium disabled:opacity-40">
+                Next <i class="fa-solid fa-chevron-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section A: Income Growth -->
+          <div v-if="activeModule.id === 'income'" class="space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                  <i class="fa-solid fa-arrow-trend-up text-blue-500 mr-2"></i> 1. Sharp Increase in Income & GDP
+                </h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  The international community uses Gross Domestic Product (GDP) and per capita GDP to measure economic levels. Since reform and opening-up, China's economic output has surged drastically.
+                </p>
+                
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                  <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 p-4 rounded-xl">
+                    <span class="text-xs text-blue-600 dark:text-blue-400 font-semibold block uppercase">1978 Per Capita GDP</span>
+                    <span class="text-2xl font-extrabold text-blue-900 dark:text-blue-200">RMB 385</span>
+                  </div>
+                  <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50 p-4 rounded-xl">
+                    <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold block uppercase">2024 Per Capita GDP</span>
+                    <span class="text-2xl font-extrabold text-emerald-900 dark:text-emerald-200">RMB 95,749</span>
+                    <span class="text-xs text-emerald-600 block mt-1"><i class="fa-solid fa-arrow-up"></i> ~249x Increase</span>
+                  </div>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-2">Key Definition: Per Capita Disposable Income</h4>
+                  <p class="text-xs text-slate-600 dark:text-slate-300">
+                    The income actually available for daily living expenses and savings after deducting taxes and social security contributions from total household income.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Interactive Chart Container -->
+              <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Per Capita GDP Growth Trend (RMB)</h4>
+                  <span class="text-xs bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded font-mono">1978 - 2024</span>
+                </div>
+                <div class="h-64 relative">
+                  <canvas id="gdpChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gini Coefficient & Wealth Gap -->
+            <div class="border-t border-slate-200 dark:border-slate-700 pt-6 space-y-4">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                <i class="fa-solid fa-scale-unbalanced text-amber-500 mr-2"></i> 2. Wealth Concentration & Gini Coefficient
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 p-4 rounded-xl">
+                  <h4 class="font-bold text-amber-900 dark:text-amber-200 text-sm mb-1">Gini Warning Line (0.4)</h4>
+                  <p class="text-xs text-amber-800 dark:text-amber-300">
+                    Although China's Gini coefficient has shown an overall decreasing trend in recent years, it continues to hover above the international warning threshold of 0.4, reflecting ongoing income disparity.
+                  </p>
+                </div>
+
+                <div class="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/40 p-4 rounded-xl">
+                  <h4 class="font-bold text-indigo-900 dark:text-indigo-200 text-sm mb-1">Urban-Rural Disparity</h4>
+                  <p class="text-xs text-indigo-800 dark:text-indigo-300">
+                    The income gap between urban and rural residents dropped from a peak of 3.3 times in 2009 down to 2.34 times in 2024 as rural development policies took effect.
+                  </p>
+                </div>
+
+                <div class="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/40 p-4 rounded-xl">
+                  <h4 class="font-bold text-purple-900 dark:text-purple-200 text-sm mb-1">Western Development Strategy</h4>
+                  <p class="text-xs text-purple-800 dark:text-purple-300">
+                    Launched in 2001 and reinforced by the Belt & Road Initiative (2013) to bridge coastal-inland regional disparities through infrastructure (e.g. South-to-North Water Transfer), energy, and education.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section B: Consumption Patterns -->
+          <div v-if="activeModule.id === 'consumption'" class="space-y-8">
+            <!-- Three Major Items Evolution Timeline -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                <i class="fa-solid fa-boxes-packing text-indigo-500 mr-2"></i> Evolution of the "Three Major Items" (三大件)
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300">
+                The evolution of essential household items over decades reflects rising income levels and the shift from basic living security to quality and hedonic consumption.
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50 dark:bg-slate-900/40">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase">Late 1970s</span>
+                    <i class="fa-solid fa-bicycle text-slate-400"></i>
+                  </div>
+                  <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Basic Durables</h4>
+                  <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                    <li>• Bicycle (腳踏車)</li>
+                    <li>• Wristwatch (手錶)</li>
+                    <li>• Sewing Machine (縫纫機)</li>
+                  </ul>
+                </div>
+
+                <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50 dark:bg-slate-900/40">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase">1980s</span>
+                    <i class="fa-solid fa-tv text-slate-400"></i>
+                  </div>
+                  <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Home Electricals</h4>
+                  <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                    <li>• Color TV (彩電)</li>
+                    <li>• Refrigerator (雪櫃)</li>
+                    <li>• Washing Machine (洗衣機)</li>
+                  </ul>
+                </div>
+
+                <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50 dark:bg-slate-900/40">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase">1990s</span>
+                    <i class="fa-solid fa-fan text-slate-400"></i>
+                  </div>
+                  <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Modern Comforts</h4>
+                  <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                    <li>• Air Conditioner (冷氣機)</li>
+                    <li>• VCD/DVD Player</li>
+                    <li>• Mobile Phone / Computer</li>
+                  </ul>
+                </div>
+
+                <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50 dark:bg-slate-900/40">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase">2000s Onwards</span>
+                    <i class="fa-solid fa-car text-slate-400"></i>
+                  </div>
+                  <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Asset & Upgrade</h4>
+                  <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                    <li>• Private Housing (住房)</li>
+                    <li>• Private Automobiles (汽車)</li>
+                    <li>• Children's Education (子女教育)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- E-Commerce & Class Consumption Features -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                  <i class="fa-solid fa-mobile-screen-button text-emerald-500 mr-2"></i> Electronic & Modern Consumption
+                </h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Online payments reached <span class="font-bold text-emerald-600 dark:text-emerald-400">1.029 billion users in 2024</span>. Platforms such as Alibaba, JD.com, and Pinduoduo drive cross-border and domestic e-commerce expansion.
+                </p>
+                <div class="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40 p-4 rounded-xl text-xs space-y-2">
+                  <div class="font-bold text-emerald-900 dark:text-emerald-200">Key Consumption Concepts:</div>
+                  <p class="text-emerald-800 dark:text-emerald-300">• <strong>Hedonic Consumption (享樂型消費):</strong> Spending focused on personalized enjoyment, leisure, and psychological satisfaction.</p>
+                  <p class="text-emerald-800 dark:text-emerald-300">• <strong>Generation Z Trends:</strong> Emphasis on self-expression, interest-driven spending, and live commerce.</p>
+                </div>
+              </div>
+
+              <!-- Social Class Consumption Features -->
+              <div class="space-y-3">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                  <i class="fa-solid fa-users text-blue-500 mr-2"></i> Class Consumption Features
+                </h3>
+                <div class="space-y-2 text-xs">
+                  <div class="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <span class="font-bold text-blue-600 dark:text-blue-400">Upper Class:</span> Values wealth growth, investments (gold, stocks, funds), international travel, luxury items, and children's premium education.
+                  </div>
+                  <div class="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <span class="font-bold text-indigo-600 dark:text-indigo-400">Middle Class:</span> Higher educated; pursues lifestyle quality, leisure activities, health wellness, and high priority on children's education.
+                  </div>
+                  <div class="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <span class="font-bold text-slate-600 dark:text-slate-400">Lower Class:</span> Focuses mainly on essential living needs (food, clothing) with limited disposable funds for discretionary entertainment.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section C: Education -->
+          <div v-if="activeModule.id === 'education'" class="space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                  <i class="fa-solid fa-graduation-cap text-purple-500 mr-2"></i> 1. Expansion of Gross Enrolment Rates
+                </h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Implementation of 9-year compulsory education (1986) and massive higher education expansion since 1998 resulted in significant national human capital enhancement.
+                </p>
+
+                <div class="space-y-3 text-xs">
+                  <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <span class="font-medium">Junior Secondary Gross Enrolment</span>
+                    <span class="font-mono font-bold text-slate-900 dark:text-white">80% (1995) → <span class="text-purple-600 dark:text-purple-400">102.5% (2020)</span></span>
+                  </div>
+                  <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <span class="font-medium">Senior Secondary Gross Enrolment</span>
+                    <span class="font-mono font-bold text-slate-900 dark:text-white">26% (1990) → <span class="text-purple-600 dark:text-purple-400">92% (2024)</span></span>
+                  </div>
+                  <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <span class="font-medium">Higher Education Enrolment</span>
+                    <span class="font-mono font-bold text-slate-900 dark:text-white">3.4% (1990) → <span class="text-purple-600 dark:text-purple-400">60.8% (2024)</span></span>
+                  </div>
+                </div>
+
+                <div class="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/40 p-4 rounded-xl text-xs">
+                  <span class="font-bold text-purple-900 dark:text-purple-200 block mb-1">Fiscal Funding Commitment (4% GDP Target)</span>
+                  <p class="text-purple-800 dark:text-purple-300">
+                    Since 2012, government fiscal spending on education has consistently remained above 4% of total GDP, reaching RMB 6,459.5 billion in 2023.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Education Chart -->
+              <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Gross Higher Education Enrolment Rate (%)</h4>
+                  <span class="text-xs bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded font-mono">1990 - 2024</span>
+                </div>
+                <div class="h-64 relative">
+                  <canvas id="educationChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Double Reduction Policy Focus -->
+            <div class="border-t border-slate-200 dark:border-slate-700 pt-6 space-y-4">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                <i class="fa-solid fa-file-contract text-red-500 mr-2"></i> Key Policy Focus: The "Double Reduction" Policy (雙減政策)
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <div class="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 p-4 rounded-xl">
+                  <h4 class="font-bold text-red-900 dark:text-red-200 text-sm mb-1">1. Homework Burden Reduction</h4>
+                  <p class="text-red-800 dark:text-red-300">
+                    Strict caps on total homework duration to ensure primary and secondary students maintain healthy sleep schedules and balanced physical development.
+                  </p>
+                </div>
+
+                <div class="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 p-4 rounded-xl">
+                  <h4 class="font-bold text-red-900 dark:text-red-200 text-sm mb-1">2. Off-Campus Tutoring Ban</h4>
+                  <p class="text-red-800 dark:text-red-300">
+                    Prohibits capitalized profit-making off-campus academic tutoring for compulsory stage students, combating manufactured academic anxiety by private agencies.
+                  </p>
+                </div>
+
+                <div class="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 p-4 rounded-xl">
+                  <h4 class="font-bold text-red-900 dark:text-red-200 text-sm mb-1">3. Educational Equity</h4>
+                  <p class="text-red-800 dark:text-red-300">
+                    Ensures public schools remain the core learning platform, preventing wealthy families from monopolizing academic advantages through expensive private tutoring.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section D: Healthcare -->
+          <div v-if="activeModule.id === 'healthcare'" class="space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                  <i class="fa-solid fa-heart-pulse text-rose-500 mr-2"></i> Healthcare System & Coverage Expansion
+                </h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Total health expenditure increased from 3% of GDP in 1978 to 7.19% in 2023. Universal medical insurance now covers over 95% of the population (~1.327 billion citizens).
+                </p>
+
+                <!-- Hierarchical Diagram Card -->
+                <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                  <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">The Hierarchical Medical System (分級診療)</h4>
+                  <div class="space-y-2 text-xs">
+                    <div class="p-2.5 bg-blue-100 dark:bg-blue-900/50 text-blue-900 dark:text-blue-100 rounded-lg flex justify-between items-center">
+                      <span><strong>Tertiary Hospitals (三級醫院):</strong> Serious illness treatment</span>
+                      <i class="fa-solid fa-arrow-down-up-across-line text-blue-500"></i>
+                    </div>
+                    <div class="p-2.5 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-lg flex justify-between items-center">
+                      <span><strong>Secondary Hospitals (二级醫院):</strong> Regional acute & specialty care</span>
+                      <i class="fa-solid fa-arrows-up-down text-slate-500"></i>
+                    </div>
+                    <div class="p-2.5 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-900 dark:text-emerald-100 rounded-lg flex justify-between items-center">
+                      <span><strong>Primary / Community Clinics (基層醫療):</strong> Minor illnesses & recovery</span>
+                      <i class="fa-solid fa-house-medical text-emerald-600"></i>
+                    </div>
+                  </div>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 italic">
+                    Goal: "Treat minor illnesses in community clinics, cure serious illnesses in tertiary hospitals, and recover back in community facilities."
+                  </p>
+                </div>
+              </div>
+
+              <!-- Life Expectancy & Metrics -->
+              <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                  <i class="fa-solid fa-chart-pie text-emerald-500 mr-2"></i> Health Indicators & Life Expectancy
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="p-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40 rounded-xl text-center">
+                    <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold uppercase block">2024 Life Expectancy</span>
+                    <span class="text-3xl font-extrabold text-emerald-900 dark:text-emerald-100">79 yrs</span>
+                    <span class="text-xs text-emerald-600 block mt-1">+5 yrs vs Global Average</span>
+                  </div>
+                  <div class="p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 rounded-xl text-center">
+                    <span class="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase block">Shanghai (2022)</span>
+                    <span class="text-3xl font-extrabold text-blue-900 dark:text-blue-100">83.18 yrs</span>
+                    <span class="text-xs text-blue-600 block mt-1">Tier-1 Urban Standard</span>
+                  </div>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+                  <div class="font-bold text-slate-900 dark:text-white">Maternal & Infant Healthcare Improvements:</div>
+                  <p class="text-slate-600 dark:text-slate-300">• Steady decline in under-five mortality and maternal mortality rates nationwide.</p>
+                  <p class="text-slate-600 dark:text-slate-300">• Individual out-of-pocket health expenditure proportion in total health spending has consistently fallen since 2001, easing family financial pressures.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section E: Poverty Alleviation -->
+          <div v-if="activeModule.id === 'poverty'" class="space-y-8">
+            <div class="space-y-4">
+              <div class="bg-gradient-to-r from-amber-500 to-rose-500 text-white p-6 rounded-2xl shadow-md">
+                <div class="flex items-center space-x-3 mb-2">
+                  <i class="fa-solid fa-flag text-2xl"></i>
+                  <h3 class="text-xl font-extrabold">Historic Achievement in Poverty Eradication</h3>
+                </div>
+                <p class="text-sm text-amber-50 leading-relaxed">
+                  On February 25, 2021, Xi Jinping announced that all <strong>98.99 million rural poor citizens</strong> were lifted out of extreme poverty, and all 832 impoverished counties removed their poverty designations. China met the UN Sustainable Development Goal (SDG) 10 years ahead of the 2030 target!
+                </p>
+              </div>
+
+              <!-- Targeted Poverty Alleviation Cards -->
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white pt-2">
+                "Two Assurances and Three Guarantees" (兩不愁三保障)
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 text-xs text-center">
+                <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-800 dark:text-slate-200">
+                  <i class="fa-solid fa-bowl-rice text-amber-500 text-lg block mb-1"></i> Adequate Food
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-800 dark:text-slate-200">
+                  <i class="fa-solid fa-shirt text-blue-500 text-lg block mb-1"></i> Adequate Clothing
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-800 dark:text-slate-200">
+                  <i class="fa-solid fa-school text-purple-500 text-lg block mb-1"></i> Compulsory Education
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-800 dark:text-slate-200">
+                  <i class="fa-solid fa-briefcase-medical text-rose-500 text-lg block mb-1"></i> Basic Medical Care
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-800 dark:text-slate-200">
+                  <i class="fa-solid fa-house-chimney text-emerald-500 text-lg block mb-1"></i> Safe Housing
+                </div>
+              </div>
+            </div>
+
+            <!-- Specific Implementation Measures -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs pt-4 border-t border-slate-200 dark:border-slate-700">
+              <div class="p-4 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1"><i class="fa-solid fa-road text-blue-500 mr-1"></i> Transport Infrastructure</h4>
+                <p class="text-slate-600 dark:text-slate-300">
+                  4.64 million km of rural roads connected over 500,000 administrative villages with asphalt and concrete roads by end of 2024.
+                </p>
+              </div>
+
+              <div class="p-4 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1"><i class="fa-solid fa-wheat-awn text-emerald-500 mr-1"></i> Industrial Support</h4>
+                <p class="text-slate-600 dark:text-slate-300">
+                  Over 300,000 distinctive local agricultural and ecotourism bases established tailored to regional comparative advantages.
+                </p>
+              </div>
+
+              <div class="p-4 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1"><i class="fa-solid fa-wifi text-indigo-500 mr-1"></i> E-Commerce & 4G</h4>
+                <p class="text-slate-600 dark:text-slate-300">
+                  Over 98% of poor villages linked via fiber optics and 4G networks; rural online retail sales reached RMB 2.56 trillion in 2024.
+                </p>
+              </div>
+
+              <div class="p-4 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1"><i class="fa-solid fa-handshake-angle text-rose-500 mr-1"></i> Counterpart Assistance</h4>
+                <p class="text-slate-600 dark:text-slate-300">
+                  Eastern wealthy hubs (Beijing, Shanghai, Shenzhen) paired directly with western provinces (Guizhou, Yunnan) for resource and talent sharing.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div v-if="activeTab === 'quiz'" class="space-y-6">
+        <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Interactive Knowledge Check</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Test your understanding with questions directly from the CSD PPT curriculum.</p>
+          </div>
+          <div class="flex items-center space-x-3 text-sm font-semibold">
+            <span class="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-800">
+              Score: {{ quizScore }} / {{ quizzes.length }}
+            </span>
+            <button @click="resetQuiz" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs hover:bg-slate-200">
+              <i class="fa-solid fa-rotate-right mr-1"></i> Reset
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div 
+            v-for="(q, qIdx) in quizzes" 
+            :key="q.id"
+            class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            
+            <div>
+              <div class="flex items-center justify-between text-xs mb-2">
+                <span class="font-bold text-blue-600 dark:text-blue-400 uppercase">Question {{ qIdx + 1 }}</span>
+                <span class="bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-500">{{ q.category }}</span>
+              </div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base mb-4 leading-snug">{{ q.question }}</h3>
+
+              <!-- Options Grid -->
+              <div class="space-y-2">
+                <button 
+                  v-for="(opt, optIdx) in q.options" 
+                  :key="optIdx"
+                  @click="selectAnswer(q.id, optIdx)"
+                  :disabled="userAnswers[q.id] !== undefined"
+                  :class="getOptionClass(q, optIdx)"
+                  class="w-full text-left p-3 rounded-xl border text-xs sm:text-sm transition flex items-center justify-between">
+                  <span>{{ opt }}</span>
+                  <i v-if="userAnswers[q.id] === optIdx && optIdx === q.correct" class="fa-solid fa-circle-check text-emerald-500 text-base"></i>
+                  <i v-else-if="userAnswers[q.id] === optIdx && optIdx !== q.correct" class="fa-solid fa-circle-xmark text-rose-500 text-base"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Feedback Box -->
+            <div v-if="userAnswers[q.id] !== undefined" class="pt-2 border-t border-slate-100 dark:border-slate-700">
+              <div :class="userAnswers[q.id] === q.correct ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300' : 'bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300'" class="p-3 rounded-xl text-xs space-y-1">
+                <div class="font-bold flex items-center">
+                  <i :class="userAnswers[q.id] === q.correct ? 'fa-solid fa-check' : 'fa-solid fa-xmark'" class="mr-1.5"></i>
+                  <span>{{ userAnswers[q.id] === q.correct ? 'Correct Answer!' : 'Incorrect' }}</span>
+                </div>
+                <p>{{ q.explanation }}</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div v-if="activeTab === 'flashcards'" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 gap-4 shadow-sm">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Curriculum Key Terms & Concepts</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Click any card to flip between English/Chinese terms and official curriculum definitions.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-slate-500">Filter:</span>
+            <select v-model="flashcardFilter" class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 font-medium">
+              <option value="ALL">All Categories</option>
+              <option value="Income">Income & Wealth</option>
+              <option value="Consumption">Consumption</option>
+              <option value="Education">Education</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Poverty">Poverty Alleviation</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div 
+            v-for="card in filteredFlashcards" 
+            :key="card.id"
+            @click="card.flipped = !card.flipped"
+            class="card-flip h-52 cursor-pointer group">
+            <div :class="{ 'card-flipped': card.flipped }" class="card-inner w-full h-full relative rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+              
+              <!-- Card Front -->
+              <div class="card-front absolute inset-0 bg-white dark:bg-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-xs mb-2">
+                    <span class="px-2 py-0.5 rounded font-semibold bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300">{{ card.category }}</span>
+                    <span class="text-slate-400 text-xs"><i class="fa-solid fa-rotate mr-1"></i> Flip</span>
+                  </div>
+                  <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mt-3">{{ card.termEn }}</h3>
+                  <p class="text-sm font-semibold text-blue-600 dark:text-blue-400 mt-1">{{ card.termZh }}</p>
+                </div>
+                <div class="text-xs text-slate-400 italic">Click to view official definition</div>
+              </div>
+
+              <!-- Card Back -->
+              <div class="card-back absolute inset-0 bg-slate-900 text-white rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                    <span>{{ card.termZh }}</span>
+                    <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                  </div>
+                  <p class="text-xs sm:text-sm leading-relaxed text-slate-200 mt-1">{{ card.definition }}</p>
+                </div>
+                <div class="text-xs text-slate-400 text-right">Click to return</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="activeTab === 'exam'" class="space-y-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">HKDSE CSD Exam Simulator</span>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">Guided Source Analysis & Practice Workspace</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Practice responding to real HKDSE style CSD source questions with instant model answers and mark breakdowns.</p>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button 
+                v-for="(issue, iIdx) in issueAnalyses" 
+                :key="issue.id"
+                @click="activeIssueIndex = iIdx"
+                :class="activeIssueIndex === iIdx ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                Issue {{ iIdx + 1 }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Issue Analysis Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Source Column (5 Cols) -->
+          <div class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-4 h-fit">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+              <h3 class="font-bold text-slate-900 dark:text-white text-base">{{ currentIssue.topic }}</h3>
+              <span class="text-xs bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 px-2 py-0.5 rounded font-mono">Exam Focus</span>
+            </div>
+
+            <div class="space-y-3">
+              <div v-for="(src, sKey) in currentIssue.sources" :key="sKey" class="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
+                <span class="font-bold text-blue-600 dark:text-blue-400 uppercase block">{{ src.title }}</span>
+                <p class="text-slate-700 dark:text-slate-300 leading-relaxed">{{ src.content }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question & Writing Workspace (7 Cols) -->
+          <div class="lg:col-span-7 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-6">
+            <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+              <span class="text-xs font-semibold text-slate-500 uppercase">Question Prompt</span>
+              <h4 class="font-bold text-slate-900 dark:text-white text-base mt-1">{{ currentIssue.question.prompt }}</h4>
+              <span class="text-xs font-mono text-blue-600 dark:text-blue-400 font-bold block mt-1">Allocation: {{ currentIssue.question.marks }} Marks</span>
+            </div>
+
+            <!-- Student Practice Textarea -->
+            <div class="space-y-2">
+              <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex justify-between">
+                <span>Your Essay Response Workspace:</span>
+                <span class="text-slate-400 font-normal">Word count: {{ studentResponse.trim() ? studentResponse.trim().split(/\s+/).length : 0 }}</span>
+              </label>
+              <textarea 
+                v-model="studentResponse" 
+                rows="6" 
+                placeholder="Type your response here using structural frameworks (e.g. Firstly... Secondly... In conclusion...)..."
+                class="w-full p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100"></textarea>
+            </div>
+
+            <!-- Model Answer & Rubric Toggle -->
+            <div>
+              <button 
+                @click="showModelAnswer = !showModelAnswer" 
+                class="w-full py-2.5 px-4 rounded-xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-700 text-white text-xs font-bold transition flex items-center justify-center space-x-2">
+                <i class="fa-solid" :class="showModelAnswer ? 'fa-eye-slash' : 'fa-eye'"></i>
+                <span>{{ showModelAnswer ? 'Hide Official Model Answer & Marking Scheme' : 'Reveal Official Model Answer & Marking Scheme' }}</span>
+              </button>
+
+              <div v-if="showModelAnswer" class="mt-4 p-5 bg-blue-50/70 dark:bg-slate-900/80 rounded-xl border border-blue-200 dark:border-slate-700 space-y-4 text-xs">
+                <div>
+                  <h5 class="font-bold text-blue-900 dark:text-blue-200 text-sm mb-2 flex items-center">
+                    <i class="fa-solid fa-award text-amber-500 mr-2"></i> High Score Assessment Key Points
+                  </h5>
+                  <ul class="list-disc list-inside text-slate-700 dark:text-slate-300 space-y-1">
+                    <li v-for="(point, pIdx) in currentIssue.question.keyPoints" :key="pIdx">{{ point }}</li>
+                  </ul>
+                </div>
+
+                <div class="border-t border-blue-200 dark:border-slate-700 pt-3">
+                  <h5 class="font-bold text-slate-900 dark:text-white text-sm mb-2">Suggested Model Answer Paragraphs:</h5>
+                  <div class="space-y-3 text-slate-700 dark:text-slate-300 leading-relaxed font-sans whitespace-pre-line">
+                    {{ currentIssue.question.modelAnswer }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div v-if="activeTab === 'aiTutor'" class="space-y-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-600 flex items-center justify-center text-white text-lg font-bold shadow-md">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white">Gemini AI Curriculum Assistant</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Ask any CSD question regarding Quality of Life, Gini coefficient, Double Reduction, or Poverty Alleviation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-[500px] flex flex-col">
+          <!-- Chat Log -->
+          <div class="flex-1 p-6 overflow-y-auto space-y-4" id="chatContainer">
+            <div v-for="(msg, mIdx) in chatMessages" :key="mIdx" :class="msg.role === 'user' ? 'justify-end' : 'justify-start'" class="flex">
+              <div :class="msg.role === 'user' ? 'bg-blue-600 text-white rounded-2xl rounded-tr-none' : 'bg-slate-100 dark:bg-slate-700/80 text-slate-800 dark:text-slate-100 rounded-2xl rounded-tl-none'" class="max-w-[80%] p-4 text-xs sm:text-sm leading-relaxed space-y-2">
+                <div class="font-bold text-[10px] opacity-70 uppercase mb-1">{{ msg.role === 'user' ? 'You' : 'Gemini CSD Tutor' }}</div>
+                <p class="whitespace-pre-line">{{ msg.text }}</p>
+              </div>
+            </div>
+            <div v-if="aiLoading" class="flex justify-start">
+              <div class="bg-slate-100 dark:bg-slate-700 p-3 rounded-2xl text-xs text-slate-500 flex items-center space-x-2">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>Gemini is generating response...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <div class="p-4 border-t border-slate-200 dark:border-slate-700 flex gap-2">
+            <input 
+              v-model="userQuery" 
+              @keyup.enter="sendAiMessage"
+              type="text" 
+              placeholder="e.g. How does the Western Development Strategy narrow regional income disparities?" 
+              class="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            <button @click="sendAiMessage" :disabled="aiLoading || !userQuery.trim()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-xs transition disabled:opacity-50">
+              Send <i class="fa-solid fa-paper-plane ml-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="activeTab === 'github'" class="space-y-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center text-xl">
+              <i class="fa-brands fa-github"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white">Publish to GitHub Pages Instructions</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Follow these simple steps to host this interactive teaching platform for free on GitHub.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 text-xs">
+            <div class="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <div class="font-bold text-blue-600 dark:text-blue-400 text-sm">Step 1: Save Code</div>
+              <p class="text-slate-600 dark:text-slate-300">Copy the code from this editor window and save it locally as <code>index.html</code>.</p>
+            </div>
+
+            <div class="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <div class="font-bold text-blue-600 dark:text-blue-400 text-sm">Step 2: Create Repository</div>
+              <p class="text-slate-600 dark:text-slate-300">Create a new public repository on <a href="https://github.com" target="_blank" class="underline text-blue-500">GitHub.com</a> (e.g. <code>csd-quality-of-life</code>).</p>
+            </div>
+
+            <div class="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <div class="font-bold text-blue-600 dark:text-blue-400 text-sm">Step 3: Enable Pages</div>
+              <p class="text-slate-600 dark:text-slate-300">Upload <code>index.html</code>, go to Repo <strong>Settings → Pages</strong>, select <code>main</code> branch, and save!</p>
+            </div>
+          </div>
+
+          <!-- Generated README Box -->
+          <div class="space-y-2 border-t border-slate-100 dark:border-slate-700 pt-4">
+            <label class="text-xs font-bold text-slate-700 dark:text-slate-300 flex justify-between items-center">
+              <span>Suggested GitHub README.md:</span>
+              <button @click="copyReadme" class="text-blue-600 dark:text-blue-400 hover:underline text-xs"><i class="fa-solid fa-copy mr-1"></i> Copy README</button>
+            </label>
+            <pre class="bg-slate-900 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto font-mono leading-relaxed">{{ generatedReadme }}</pre>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-4 text-center text-xs text-slate-500">
+      <p>Citizenship & Social Development • Topic 1 Learning Focus 2 Teaching Platform</p>
+    </footer>
+  </div>
+
+  <script>
+    const { createApp, ref, computed, onMounted, nextTick, watch } = Vue;
+
+    createApp({
+      setup() {
+        const isDark = ref(false);
+        const activeTab = ref('modules');
+        const mobileMenuOpen = ref(false);
+        const currentModuleIndex = ref(0);
+        const flashcardFilter = ref('ALL');
+        const activeIssueIndex = ref(0);
+        const studentResponse = ref('');
+        const showModelAnswer = ref(false);
+        const userAnswers = ref({});
+        const userQuery = ref('');
+        const aiLoading = ref(false);
+
+        const chatMessages = ref([
+          { role: 'model', text: 'Hello! I am your CSD AI Study Assistant. You can ask me anything regarding Quality of Life, Gini coefficient, consumption trends, education reforms, or poverty alleviation.' }
+        ]);
+
+        const mainTabs = [
+          { id: 'modules', name: 'Learning Modules', icon: 'fa-solid fa-book-open' },
+          { id: 'quiz', name: 'Quizzes', icon: 'fa-solid fa-circle-question' },
+          { id: 'flashcards', name: 'Key Terms', icon: 'fa-solid fa-layer-group' },
+          { id: 'exam', name: 'Exam Simulator', icon: 'fa-solid fa-pen-to-square' },
+          { id: 'aiTutor', name: 'AI Tutor', icon: 'fa-solid fa-robot' },
+          { id: 'github', name: 'GitHub Guide', icon: 'fa-brands fa-github' }
+        ];
+
+        const modules = [
+          { id: 'income', letter: 'A', title: 'Increase in Income & Wealth Distribution', subtitle: 'GDP growth, Per Capita Disposable Income, Gini Coefficient & Disparities', icon: 'fa-solid fa-arrow-trend-up' },
+          { id: 'consumption', letter: 'B', title: 'Changes in Consumption Patterns', subtitle: 'Three Major Items, Hedonic Consumption, Gen Z & E-Commerce', icon: 'fa-solid fa-shopping-bag' },
+          { id: 'education', letter: 'C', title: 'Advancement of Education', subtitle: 'Enrolment Rates, Fiscal Investment & The Double Reduction Policy', icon: 'fa-solid fa-graduation-cap' },
+          { id: 'healthcare', letter: 'D', title: 'Improvement in Healthcare', subtitle: 'Universal Medical Insurance, Hierarchical Care & Health Metrics', icon: 'fa-solid fa-heart-pulse' },
+          { id: 'poverty', letter: 'E', title: 'Practice of Targeted Poverty Alleviation', subtitle: 'Two Assurances Three Guarantees, Infrastructure & Global SDGs', icon: 'fa-solid fa-hand-holding-hand' }
+        ];
+
+        const activeModule = computed(() => modules[currentModuleIndex.value]);
+
+        const quizzes = [
+          {
+            id: 1,
+            category: 'Income Strategies',
+            question: 'Which of the following is NOT part of the Government\'s strategies to protect the disadvantaged?',
+            options: ['A. Pension systems in urban/rural regions', 'B. Social medical insurance', 'C. Coordinated regional development', 'D. Food allowance'],
+            correct: 3,
+            explanation: 'Food allowance is not listed as part of the core national institutional social security framework (PPT Slide 19).'
+          },
+          {
+            id: 2,
+            category: 'Consumption Patterns',
+            question: 'Which of the following was NOT one of the "Three Major Items" in the early 2000s?',
+            options: ['A. Housing', 'B. Watch', 'C. Automobiles', 'D. Children\'s Education'],
+            correct: 1,
+            explanation: 'The wrist watch was a major item in the late 1970s, not the early 2000s when housing, cars, and education took precedence (PPT Slide 30).'
+          },
+          {
+            id: 3,
+            category: 'Education Policy',
+            question: 'Which of the following is NOT part of China\'s official national education policy framework?',
+            options: ['A. Nine-year free compulsory education', 'B. Exemption on rural tuition/miscellaneous fees', 'C. Rural teachers\' subsistence allowance', 'D. Free university tuition for all'],
+            correct: 3,
+            explanation: 'Universal free university tuition is not provided; higher education has been expanded and popularized, but remains fee-paying with student financial aid (PPT Slide 61).'
+          },
+          {
+            id: 4,
+            category: 'Healthcare System',
+            question: 'Which statement accurately describes the core target of China\'s Hierarchical Medical System?',
+            options: [
+              'A. Treat serious illnesses in community clinics, cure minor in hospitals.',
+              'B. Treat minor illnesses in community medical institutions, cure serious illnesses in tertiary hospitals, and recover back in community medical institutions.',
+              'C. Treat minor illnesses at home and severe conditions in clinics.',
+              'D. Treat all patients exclusively in central tier-1 city hospitals.'
+            ],
+            correct: 1,
+            explanation: 'The hierarchical pattern aims for "minor illnesses in community clinics, serious illnesses in tertiary hospitals, and recovery back in community facilities" (PPT Slide 86).'
+          },
+          {
+            id: 5,
+            category: 'Poverty Alleviation',
+            question: 'Which of the following is NOT one of the specialized measures implemented for rural poverty alleviation?',
+            options: ['A. Poverty alleviation by developing transport', 'B. Poverty alleviation by developing industries', 'C. Poverty alleviation through drinking water rationing', 'D. Poverty alleviation through e-commerce'],
+            correct: 2,
+            explanation: 'Drinking water rationing was not a designated poverty eradication pillar strategy (PPT Slide 98).'
+          }
+        ];
+
+        const flashcards = ref([
+          { id: 1, category: 'Income', termEn: 'Gini Coefficient', termZh: '基尼系數', definition: 'A numerical measure of income inequality ranging from 0 to 1. In China, despite overall declining trends, it remains above the 0.4 international warning threshold.', flipped: false },
+          { id: 2, category: 'Income', termEn: 'Western Development Strategy', termZh: '西部大開發', definition: 'Central policy initiated in 2001 to bridge economic, infrastructure, and educational gaps between prosperous coastal cities and inland western regions.', flipped: false },
+          { id: 3, category: 'Consumption', termEn: 'Three Major Items', termZh: '三大件', definition: 'Symbolic benchmark consumer durables reflecting living standards across decades (e.g. 1970s bicycle/watch vs 2000s housing/automobile/education).', flipped: false },
+          { id: 4, category: 'Consumption', termEn: 'Hedonic Consumption', termZh: '享樂型消費', definition: 'Purchasing behavior focused on personal enjoyment, leisure, lifestyle satisfaction, and emotional fulfillment rather than mere survival necessities.', flipped: false },
+          { id: 5, category: 'Education', termEn: 'Double Reduction Policy', termZh: '雙減政策', definition: 'Policy enacted to ease student academic stress by capping homework volume and banning profit-making off-campus academic tutoring.', flipped: false },
+          { id: 6, category: 'Healthcare', termEn: 'Hierarchical Medical System', termZh: '分級診療制度', definition: 'Healthcare structure directing minor illnesses to primary community clinics and serious conditions to major tertiary hospitals.', flipped: false },
+          { id: 7, category: 'Poverty', termEn: 'Targeted Poverty Alleviation', termZh: '精準扶貧', definition: 'Strategy proposed by Xi Jinping in 2013 providing tailored relief according to local conditions rather than generic aid.', flipped: false },
+          { id: 8, category: 'Poverty', termEn: 'Two Assurances & Three Guarantees', termZh: '兩不愁三保障', definition: 'Assurances of adequate food and clothing; guarantees of compulsory education, basic medical care, and safe housing.', flipped: false }
+        ]);
+
+        const filteredFlashcards = computed(() => {
+          if (flashcardFilter.value === 'ALL') return flashcards.value;
+          return flashcards.value.filter(c => c.category === flashcardFilter.value);
+        });
+
+        const issueAnalyses = [
+          {
+            id: 1,
+            topic: 'Issue Analysis 1: Impact of Online Shopping & Over-Consumption',
+            sources: {
+              srcA: { title: 'Source A: Saving Habits by Age Group', content: 'Survey data shows 59.88% of respondents aged 40-50 do not save, whereas 50.43% of elderly (70-100) maintain strict savings behavior.' },
+              srcB: { title: 'Source B: Consumer Psychology of Youth', content: 'Live commerce and promotional festivals encourage young shoppers to spend in advance for immediate enjoyment.' },
+              srcC: { title: 'Source C: University Student Financial Health', content: 'Convenient online credit loans lead over 53% of university students to spend beyond their means, accumulating debts.' }
+            },
+            question: {
+              prompt: 'What challenges does online shopping bring to Chinese society? Explain your answer with reference to the sources and your own knowledge.',
+              marks: 6,
+              keyPoints: [
+                'Fostering an excessive materialist consumption atmosphere that strains individual financial health.',
+                'Engendering debt burdens and psychological stress among university students and young people.',
+                'Impacting long-term social positivity and values when financial management skills are lacking.'
+              ],
+              modelAnswer: `Firstly, online shopping fosters an excessive consumption atmosphere, posing a challenge to Chinese society. As shown in Source B, ubiquitous promotions like live commerce increase young consumers' desire to shop and spend in advance for immediate gratification. While this boosts short-term economic activity, over-emphasizing consumerism can weaken traditional values of prudence and thrift.
+
+Secondly, online shopping brings debt risks and mental pressure to adolescents. According to Source C, over 53% of university students borrow money for shopping beyond their means due to easy access to e-commerce credit lines. Prolonged indebtedness places heavy psychological burdens on youth, dampening their long-term life positivity and societal vitality.`
+            }
+          },
+          {
+            id: 2,
+            topic: 'Issue Analysis 2: Educational Reform & The "Double Reduction" Policy',
+            sources: {
+              srcA: { title: 'Source A: Off-Campus Tutoring Participation Rates', content: 'Senior secondary tutoring participation is highest at 51.9% due to public exam pressure; primary students join mostly interest classes (27.9%).' },
+              srcB: { title: 'Source B: Central Double Reduction Directives', content: 'Curbs homework duration, strictly forbids profit-making off-campus academic tutoring, and addresses manufactured academic anxiety.' }
+            },
+            question: {
+              prompt: '"The Double Reduction policy can relieve students\' study pressure and improve the learning environment." How do the sources support this view?',
+              marks: 6,
+              keyPoints: [
+                'Balancing student life by capping homework and freeing leisure time for holistic development.',
+                'Cracking down on unscrupulous tutoring institutions that manufacture academic anxiety for commercial profit.',
+                'Restoring fairness and core educational purpose within public schools.'
+              ],
+              modelAnswer: `Firstly, the policy gives students a balanced life by directly reducing excessive study pressure. Source A indicates that over half (51.9%) of senior secondary students attend off-campus academic tutoring, leaving little rest time. By strictly regulating homework caps, Double Reduction restores personal time for extra-curricular interests and healthy social growth.
+
+Secondly, the policy cracks down on commercialized tutoring institutions that artificially amplify social anxiety. Source B shows the Central Authorities rectified tutoring chaos where private firms manufactured exam panic for profit. By eliminating profit-driven academic tutoring, the learning environment returns to its original purpose: fostering well-rounded, healthy citizens.`
+            }
+          }
+        ];
+
+        const currentIssue = computed(() => issueAnalyses[activeIssueIndex.value]);
+
+        const quizScore = computed(() => {
+          let score = 0;
+          quizzes.forEach(q => {
+            if (userAnswers.value[q.id] === q.correct) score++;
+          });
+          return score;
+        });
+
+        const overallProgress = computed(() => {
+          const quizCount = Object.keys(userAnswers.value).length;
+          const totalQuizzes = quizzes.length;
+          const ratio = (quizCount / totalQuizzes) * 100;
+          return Math.round(ratio);
+        });
+
+        function selectAnswer(qId, optIdx) {
+          userAnswers.value[qId] = optIdx;
+        }
+
+        function getOptionClass(q, optIdx) {
+          const selected = userAnswers.value[q.id];
+          if (selected === undefined) {
+            return 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-600';
+          }
+          if (optIdx === q.correct) {
+            return 'bg-emerald-100 dark:bg-emerald-950/60 border-emerald-500 font-bold text-emerald-900 dark:text-emerald-200';
+          }
+          if (selected === optIdx && optIdx !== q.correct) {
+            return 'bg-rose-100 dark:bg-rose-950/60 border-rose-500 font-bold text-rose-900 dark:text-rose-200';
+          }
+          return 'bg-slate-50 dark:bg-slate-800 opacity-50 border-slate-200 dark:border-slate-700';
+        }
+
+        function resetQuiz() {
+          userAnswers.value = {};
+        }
+
+        function prevModule() {
+          if (currentModuleIndex.value > 0) currentModuleIndex.value--;
+        }
+
+        function nextModule() {
+          if (currentModuleIndex.value < modules.length - 1) currentModuleIndex.value++;
+        }
+
+        function toggleDarkMode() {
+          isDark.value = !isDark.value;
+          if (isDark.value) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        async function sendAiMessage() {
+          if (!userQuery.value.trim() || aiLoading.value) return;
+          const qText = userQuery.value.trim();
+          chatMessages.value.push({ role: 'user', text: qText });
+          userQuery.value = '';
+          aiLoading.value = true;
+
+          try {
+            const systemPrompt = "You are an expert Hong Kong CSD (Citizenship & Social Development) curriculum tutor specializing in Topic 1 Learning Focus 2: Quality of Life in China. Answer concisely, using structured bullet points and academic CSD terminology.";
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: qText }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+              })
+            });
+
+            const result = await response.json();
+            const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I could not generate a response. Please try again.";
+            chatMessages.value.push({ role: 'model', text: reply });
+          } catch (err) {
+            chatMessages.value.push({ role: 'model', text: 'Error contacting AI assistant. Please check network connection.' });
+          } finally {
+            aiLoading.value = false;
+            nextTick(() => {
+              const el = document.getElementById('chatContainer');
+              if (el) el.scrollTop = el.scrollHeight;
+            });
+          }
+        }
+
+        const generatedReadme = `# CSD Quality of Life Interactive Platform
+
+Interactive educational platform for Citizenship & Social Development (Topic 1 Learning Focus 2: Changes and Enhancement of People's Quality of Life).
+
+## Features
+- **Interactive Curriculum Modules**: Income, Consumption, Education, Healthcare, and Poverty Alleviation.
+- **Data Visualizations**: Built with Chart.js showing per capita GDP growth and higher education enrolment trends.
+- **Knowledge Check Quizzes**: Interactive questions with explanations directly from PPT slides.
+- **Exam Simulator**: Guided source analysis with model answers and rubric breakdowns.
+- **Flashcard Hub**: Official English/Chinese definitions for curriculum key terms.
+- **Gemini AI Tutor**: Integrated study assistant for custom Q&A.
+
+## Live Demo
+Hosted via GitHub Pages!`;
+
+        function copyReadme() {
+          const el = document.createElement('textarea');
+          el.value = generatedReadme;
+          document.body.appendChild(el);
+          el.select();
+          document.execCommand('copy');
+          document.body.removeChild(el);
+          alert('README copied to clipboard!');
+        }
+
+        // Chart Initialization
+        let gdpChartInst = null;
+        let eduChartInst = null;
+
+        function initCharts() {
+          nextTick(() => {
+            const gdpCtx = document.getElementById('gdpChart');
+            if (gdpCtx) {
+              if (gdpChartInst) gdpChartInst.destroy();
+              gdpChartInst = new Chart(gdpCtx, {
+                type: 'line',
+                data: {
+                  labels: ['1978', '1990', '2000', '2010', '2020', '2024'],
+                  datasets: [{
+                    label: 'Per Capita GDP (RMB)',
+                    data: [385, 1663, 7942, 30808, 71828, 95749],
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: { y: { beginAtZero: true } }
+                }
+              });
+            }
+
+            const eduCtx = document.getElementById('educationChart');
+            if (eduCtx) {
+              if (eduChartInst) eduChartInst.destroy();
+              eduChartInst = new Chart(eduCtx, {
+                type: 'bar',
+                data: {
+                  labels: ['1990', '2000', '2010', '2020', '2024'],
+                  datasets: [{
+                    label: 'Gross Higher Ed Enrolment (%)',
+                    data: [3.4, 12.5, 26.5, 54.4, 60.8],
+                    backgroundColor: '#8b5cf6',
+                    borderRadius: 8
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: { y: { beginAtZero: true, max: 100 } }
+                }
+              });
+            }
+          });
+        }
+
+        watch(currentModuleIndex, () => {
+          initCharts();
+        });
+
+        watch(activeTab, (newTab) => {
+          if (newTab === 'modules') {
+            initCharts();
+          }
+        });
+
+        onMounted(() => {
+          initCharts();
+        });
+
+        return {
+          isDark,
+          activeTab,
+          mainTabs,
+          mobileMenuOpen,
+          modules,
+          currentModuleIndex,
+          activeModule,
+          quizzes,
+          userAnswers,
+          selectAnswer,
+          getOptionClass,
+          resetQuiz,
+          quizScore,
+          overallProgress,
+          flashcards,
+          flashcardFilter,
+          filteredFlashcards,
+          issueAnalyses,
+          activeIssueIndex,
+          currentIssue,
+          studentResponse,
+          showModelAnswer,
+          userQuery,
+          chatMessages,
+          aiLoading,
+          sendAiMessage,
+          prevModule,
+          nextModule,
+          toggleDarkMode,
+          generatedReadme,
+          copyReadme
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
